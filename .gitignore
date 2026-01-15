@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Project Data (Exclude large datasets)
+data/
+api_data_aadhar_biometric/
+api_data_aadhar_demographic/
+api_data_aadhar_enrolment/
+*.csv
+*.xlsx
+*.zip
+*.tar.gz
+
+# Logs and Reports
+reports/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
