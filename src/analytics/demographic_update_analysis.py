@@ -17,7 +17,9 @@ def analyze_demo_vs_enrolment(df):
     Returns rows where updates exceed enrolments significantly (indicative of heavy correction/migration load).
     """
     # Group to avoid daily noise
-    grouped = df.groupby(['state', 'district']).sum().reset_index()
+    # Only sum numeric columns relevant to the analysis to avoid datetime errors
+    cols_to_sum = ['total_demo_updates', 'total_enrolment']
+    grouped = df.groupby(['state', 'district'])[cols_to_sum].sum().reset_index()
     
     # Avoid division by zero
     grouped['update_ratio'] = grouped['total_demo_updates'] / (grouped['total_enrolment'] + 1)

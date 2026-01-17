@@ -39,61 +39,76 @@ This project introduces 5 core modules that redefine how identity infrastructure
 
 ---
 
-##  Project Structure
+## 📂 Project Structure
 
-`ash
+```bash
 Aadhaar-Pulse-AI/
- data/                   # Raw and Processed Datasets
- notebooks/              # Jupyter Notebooks for Deep Dive Analysis
-    01_data_understanding.ipynb
-    02_data_cleaning.ipynb
-    03_exploratory_analysis.ipynb
-    ...
-    07_insights_generation.ipynb
- src/                    # Core Analytical Engine
-    analytics/          # Migration & Enrolment Logic
-    metrics/            # AUSI Calculation
-    models/             # Forecasting, Anomaly Det, Clustering
-    preprocessing/      # Data Pipelines
- dashboard/              # Streamlit Interactive App
-    app.py
- reports/                # Generated CSV exports
- README.md
-`
+├── data/                       # Raw and Processed Datasets
+├── notebooks/                  # Interactive Analysis & Reports
+│   ├── 01_data_understanding.ipynb
+│   ├── 02_data_cleaning.ipynb
+│   ├── 03_exploratory_analysis.ipynb
+│   ├── 04_trend_analysis.ipynb
+│   ├── 05_anomaly_detection.ipynb
+│   ├── 06_prediction_models.ipynb
+│   ├── 07_insights_generation.ipynb
+│   └── 08_dashboard_visualization.ipynb   <-- (New) Professional Dashboard
+├── src/                        # Core Analytical Engine
+│   ├── analytics/              # Business Logic (Migration, Enrolment)
+│   ├── metrics/                # Custom Metrics (AUSI)
+│   ├── models/                 # ML Models (Isolation Forest, Ranking, Forecasting)
+│   └── preprocessing/          # ETL Pipelines
+├── run_pipeline.py             # Main ETL entry point
+├── test_src_all.py             # Unit/Integration Tests
+├── dashboard/                  # Streamlit Interactive App
+│   └── app.py
+├── reports/                    # Generated CSV exports
+└── README.md
+```
 
 ---
 
-##  Tech Stack
+## 🛠 Tech Stack
 *   **Language:** Python 3.9+
-*   **Analysis:** Pandas, NumPy, Scikit-Learn (Isolation Forest, K-Means, Linear Regression)
-*   **Visualization:** Plotly Express, Seaborn
-*   **Dashboard:** Streamlit
-*   **DevOps:** VS Code, Git
+*   **Data Processing:** Pandas, NumPy
+*   **Machine Learning:** Scikit-Learn (Isolation Forest, K-Means, Linear Regression)
+*   **Visualization:** Plotly Express, Seaborn, Matplotlib
+*   **Dashboarding:** Streamlit, Jupyter Notebooks
+*   **Pipeline:** Custom Python ETL scripts
 
 ---
 
-##  Quick Start
+## 🚀 Quick Start
 
 ### 1. Prerequisites
-Ensure you have Python installed. Install dependencies (if equirements.txt exists, otherwise install manually):
-`ash
-pip install pandas numpy scikit-learn plotly streamlit seaborn matplotlib
-`
+Ensure you have Python installed. Install dependencies:
+```bash
+pip install pandas numpy scikit-learn plotly streamlit seaborn matplotlib statsmodels nbformat
+```
 
-### 2. Run the Data Pipeline
-Execute the notebooks in order to process raw data and generate models:
-*   Run 
-otebooks/01_data_understanding.ipynb
-*   Run 
-otebooks/02_data_cleaning.ipynb (Creates merged_master_table.csv)
-*   Run 
-otebooks/07_insights_generation.ipynb (Generates Reports)
+### 2. Run the Data Pipeline (ETL)
+This script processes the raw CSV files from split folders, merges them, and creates the master dataset.
+```bash
+python run_pipeline.py
+```
+*Output:* `data/processed/merged_master_table.csv`
 
-### 3. Launch the Dashboard
-Start the interactive command center:
-`ash
+### 3. Verify System Health (Testing)
+Run the test suite to ensure all analytics, metrics, and models are functioning correctly.
+```bash
+python test_src_all.py
+```
+
+### 4. Interactive Analysis
+Open the notebooks in VS Code or Jupyter Lab to explore specific insights:
+*   **Start with:** `notebooks/08_dashboard_visualization.ipynb` for the executive summary.
+*   **Deep Dive:** Use `notebooks/04_trend_analysis.ipynb` or `notebooks/05_anomaly_detection.ipynb`.
+
+### 5. Launch the Web Dashboard
+Start the interactive Streamlit command center:
+```bash
 streamlit run dashboard/app.py
-`
+```
 
 ---
 

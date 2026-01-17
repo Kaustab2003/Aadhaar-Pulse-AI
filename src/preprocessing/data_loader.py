@@ -11,11 +11,11 @@ def load_dataset(filepath):
         raise FileNotFoundError(f"File not found: {filepath}")
     
     df = pd.read_csv(filepath)
-    if 'date' in df.columns:
-        df['date'] = pd.to_datetime(df['date'], format='%d-%m-%Y', errors='coerce')
-    
     # Standardize column names if necessary (strip spaces)
     df.columns = [c.strip() for c in df.columns]
+    
+    if 'date' in df.columns:
+        df['date'] = pd.to_datetime(df['date'], format='%d-%m-%Y', errors='coerce')
     
     return df
 

@@ -104,10 +104,19 @@ st.markdown("""
 # --- Data Loading ---
 @st.cache_data
 def get_dashboard_data():
-    data_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'raw')
-    datasets = load_all_datasets(data_dir)
-    # Master DF (no aggregation yet, raw merges)
-    raw_master = create_master_table(datasets)
+    # Try loading processed data first (Standard Pipeline)
+    processed_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'processed', 'merged_master_table.csv')
+    
+    if os.path.exists(processed_path):
+        raw_master = pd.read_csv(processed_path)
+        if 'date' in raw_master.columns:
+            raw_master['date'] = pd.to_datetime(raw_master['date'])
+    else:
+        # Fallback to raw reconstruction
+        data_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'raw')
+        datasets = load_all_datasets(data_dir)
+        raw_master = create_master_table(datasets)
+        
     # Aggregated for general charts (Summations treat NaNs as 0)
     dist_df = aggregate_by_district(raw_master)
     

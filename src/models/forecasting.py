@@ -26,9 +26,12 @@ def predict_biometric_demand(df, district_name, days_ahead=30):
     # Future dates
     last_date = district_data['date'].max()
     future_dates = [last_date + pd.Timedelta(days=i) for i in range(1, days_ahead + 1)]
-    future_ordinals = np.array([d.toordinal() for d in future_dates]).reshape(-1, 1)
+    future_ordinals = [d.toordinal() for d in future_dates]
     
-    predictions = model.predict(future_ordinals)
+    # Create DataFrame for prediction to match feature names
+    X_future = pd.DataFrame({'time_idx': future_ordinals})
+    
+    predictions = model.predict(X_future)
     
     results = pd.DataFrame({
         'date': future_dates,
