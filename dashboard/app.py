@@ -18,6 +18,17 @@ from src.models.clustering import cluster_districts
 from src.analytics.migration_analysis import classify_growth_patterns, calculate_migration_score
 from src.analytics.insights import generate_ai_insights
 from src.utils.geo_utils import get_lat_lon
+import sys
+
+# Ensure root is in path to import generator
+root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if root_path not in sys.path:
+    sys.path.append(root_path)
+
+try:
+    from generate_missing_data import generate_data
+except ImportError:
+    pass
 
 # --- Configuration & Styling ---
 st.set_page_config(
@@ -109,6 +120,28 @@ def get_dashboard_data():
     # Try loading processed data first (Standard Pipeline)
     processed_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'processed', 'merged_master_table.csv')
     
+    # Cloud Deployment Fix: Check if data exists, if not, generate synthetic data instantly
+    if not os.path.exists(processed_path):
+        # Check raw data folders
+        raw_root = os.path.join(os.path.dirname(__file__), '..')
+        # Simple check if enrolment folder has any CSV
+        enrol_check = os.path.join(raw_root, 'api_data_aadhar_enrolment')
+        
+        has_data = False
+        if os.path.exists(enrol_check):
+            if any(f.endswith('.csv') for f in os.listdir(enrol_check)):
+                has_data = True
+                
+        if not has_data:
+            # TRIGGER SYNTHETIC GENERATION
+            # This is critical for Streamlit Cloud deployment where raw data might be missing
+            try:
+                from generate_missing_data import generate_data
+                generate_data(force_synthetic=True) # Force generation if folders imply empty
+            except Exception as e:
+                st.error(f"Failed to generate demo data: {e}")
+
+    # Retry pipeline logic
     if os.path.exists(processed_path):
         raw_master = pd.read_csv(processed_path)
         if 'date' in raw_master.columns:
@@ -117,6 +150,17 @@ def get_dashboard_data():
         # Fallback to raw reconstruction
         data_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'raw')
         datasets = load_all_datasets(data_dir)
+        
+        # Double check validity
+        if not datasets or datasets.get('enrolment') is None:
+             # Last ditch effort: Run generator NOW
+             try:
+                 from generate_missing_data import generate_data
+                 generate_data(force_synthetic=True)
+                 datasets = load_all_datasets(data_dir) # Reload
+             except:
+                 pass
+
         raw_master = create_master_table(datasets)
         
     # Aggregated for general charts (Summations treat NaNs as 0)
