@@ -5,6 +5,7 @@
 [![Streamlit](https://img.shields.io/badge/Frontend-Streamlit-red)](https://streamlit.io/)
 [![Prophet](https://img.shields.io/badge/AI-Prophet%20Forecasting-orange)](https://facebook.github.io/prophet/)
 [![Plotly](https://img.shields.io/badge/Viz-Mapbox%20Geospatial-green)](https://plotly.com/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://aadhaar-pulse-ai-roka94p7fkfh6tvy4jvo54.streamlit.app/)
 
 **Aadhaar Pulse AI** is an intelligent decision support system designed to shift national identity infrastructure from *reactive* management to *predictive* optimization. By analyzing enrolment trends, biometric updates, and demographic shifts, the system forecasts demand, detects migration clusters, and optimizes Seva Center placement in real-time.
 
