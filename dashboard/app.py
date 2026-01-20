@@ -16,6 +16,8 @@ from src.models.anomaly_detection import detect_anomalies, specific_fraud_rules
 from src.models.forecasting import predict_biometric_demand
 from src.models.clustering import cluster_districts
 from src.analytics.migration_analysis import classify_growth_patterns, calculate_migration_score
+from src.analytics.insights import generate_ai_insights
+from src.utils.geo_utils import get_lat_lon
 
 # --- Configuration & Styling ---
 st.set_page_config(
@@ -177,6 +179,13 @@ if selected_district != "All Districts":
 
 filtered_df = df[mask].copy()
 
+# --- AI Insight Generator (New Feature) ---
+if not filtered_df.empty:
+    with st.expander("🤖 AI Narrative Insights (Auto-Generated)", expanded=True):
+        insights = generate_ai_insights(filtered_df, selected_state if selected_state != "All Regions" else None)
+        for insight in insights:
+            st.markdown(insight)
+
 # --- Header ---
 col_head1, col_head2 = st.columns([3, 1])
 with col_head1:
@@ -224,7 +233,49 @@ with tab1:
         with kpi4: render_metric("Network Stress (AUSI)", f"{avg_ausi:.1f}", "#e74a3b")
         
         st.markdown("<br>", unsafe_allow_html=True)
+
+        # --- NEW: Geospatial Map Section ---
+        st.markdown("### 🌍 Real-time Network Stress Heatmap")
         
+        # Prepare Map Data
+        map_data = []
+        # Group by district to get latest AUSI
+        spatial_df = filtered_df.groupby(['district', 'state'])['ausi_score'].mean().reset_index()
+        
+        for _, row in spatial_df.iterrows():
+            coords = get_lat_lon(row['district'], row['state'])
+            if coords:
+                map_data.append({
+                    'district': row['district'],
+                    'lat': coords['lat'], 
+                    'lon': coords['lon'],
+                    'ausi': row['ausi_score']
+                })
+        
+        if map_data:
+            map_df = pd.DataFrame(map_data)
+            
+            # Mapbox Configuration
+            fig_map = px.scatter_mapbox(
+                map_df, 
+                lat="lat", 
+                lon="lon", 
+                size="ausi",
+                color="ausi",
+                hover_name="district",
+                hover_data=["ausi"],
+                color_continuous_scale=px.colors.sequential.RdBu_r,
+                size_max=30, 
+                zoom=3.5,
+                title="District-wise AUSI Stress Levels"
+            )
+            fig_map.update_layout(mapbox_style="open-street-map")
+            fig_map.update_layout(margin={"r":0,"t":40,"l":0,"b":0}, height=500)
+            
+            st.plotly_chart(fig_map, use_container_width=True)
+        else:
+            st.info("Geospatial data currently unavailable for the selected region.")
+
         # 2. Main Visualizations
         col_viz1, col_viz2 = st.columns([2, 1])
         
@@ -479,7 +530,7 @@ with tab5:
             x='total_updates',
             y='ausi_score',
             color='recommendation',
-            size='impact_score',
+            size='ausi_score',
             hover_name='district',
             title="Strategic Resource Allocation Matrix",
             color_discrete_map={
